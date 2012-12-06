@@ -60,3 +60,13 @@ dep 'debian-apt-sources' do
     shell "apt-get update"
   }
 end
+
+dep 'puppet-installed' do
+  met? {
+    shell("puppet --version").match(/2\.7/)
+  }
+
+  meet {
+    shell "DEBIAN_FRONTEND='noninteractive' apt-get -yq -o Dpkg::Options::=--force-confnew install puppet -t testing"
+  }
+end
