@@ -1,11 +1,26 @@
-dep 'hello world', :someoneelse do
+
+# call it like this: babushka "k9ert:hello world" someone=test
+dep 'hello world', :someone do
+  met? { false }
   meet {
-    print "Hello World!"
+    puts "Hello #{someone ? someone : "World" }!"
   }
 end
 
-dep 'ec2 run wheezy' do
+dep 'ec2 sshin' do
+  requires ['ec2 oneup']
+  met? { false }
+  meet {
+    ip = shell("ec2-describe-instances | grep running | cut  -f4 ")
+    puts "ssh -i ~/.ssh/KimNeunertAWS.pem #{ip}"
+  }
+end
+
+dep 'ec2 oneup' do
   requires ['ec2 ready']
+  met? {
+    shell("ec2-describe-instances | grep running | cut  -f4 | wc -l").match(/1/)
+  }
   meet {
     shell "ec2-run-instances ami-4d20a724 -k KimNeunertAWS"
   }
@@ -19,7 +34,7 @@ dep 'ec2 ready' do
 
   meet {
     puts "You should do this (and hopefully you have that available):"
-    puts ". ~/ec2-env"
+    puts ". ~/bin/ec2-env"
   }
 
 end
