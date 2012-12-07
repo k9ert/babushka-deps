@@ -1,14 +1,14 @@
-dep 'ec2 sshin' do
-  requires ['ec2 oneup']
+dep 'ec2-sshin' do
+  requires ['ec2-oneup']
   met? { false }
   meet {
     ip = shell("ec2-describe-instances | grep running | cut  -f4 ")
-    puts "ssh -i ~/.ssh/KimNeunertAWS.pem #{ip}"
+    puts "ssh -i ~/.ssh/KimNeunertAWS.pem admin@#{ip}"
   }
 end
 
-dep 'ec2 oneup' do
-  requires ['ec2 ready']
+dep 'ec2-oneup' do
+  requires ['ec2-ready']
   met? {
     shell("ec2-describe-instances | grep running | cut  -f4 | wc -l").match(/1/)
   }
@@ -17,10 +17,11 @@ dep 'ec2 oneup' do
   }
 end
 
-dep 'ec2 ready' do
-  requires ['ec2-run-instances.bin']
+dep 'ec2-ready' do
+  requires ['ec2-api-tools-installed']
   met? {
-    ENV["EC2_PRIVATE_KEY"] && ENV["EC2_CERT"]
+    File.exist?(ENV["EC2_PRIVATE_KEY"]) && 
+    File.exist?(ENV["EC2_CERT"])
   }
 
   meet {
@@ -30,6 +31,13 @@ dep 'ec2 ready' do
 
 end
 
+
+dep 'ec2-api-tools-installed' do
+  requires {
+    on :ubuntu, 'ec2-run-instances.bin'
+    on :debian, 'hello world'
+  }
+end
 
 dep 'ec2-run-instances.bin' do
    installs 'ec2-api-tools'
