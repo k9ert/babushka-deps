@@ -10,13 +10,9 @@ dep 'bootstrap' do
   requires 'ssh-bootstrap','vim.bin','less.bin'
 end
 
-dep 'vim.bin' do
-  installs 'vim'
-end
+dep 'vim.bin'
 
-dep 'less.bin' do
-  installs 'less'
-end
+dep 'less.bin' 
 
 dep 'debian-apt-sources' do
   met? {

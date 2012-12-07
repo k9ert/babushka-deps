@@ -18,9 +18,11 @@ dep 'ec2-oneup' do
 end
 
 dep 'ec2-ready' do
-  requires ['ec2-api-tools-installed']
+  requires 'ec2-run-instances.bin'
   met? {
+    ENV["EC2_PRIVATE_KEY"] &&
     File.exist?(ENV["EC2_PRIVATE_KEY"]) && 
+    ENV["EC2_CERT"] &&
     File.exist?(ENV["EC2_CERT"])
   }
 
@@ -32,43 +34,19 @@ dep 'ec2-ready' do
 end
 
 
-dep 'ec2-api-tools-installed' do
-  requires {
-    on :ubuntu, 'ec2-run-instances.bin'
-    on :debian, 'hello world'
+dep 'ec2-run-instances.bin' , :for => :debian do
+  #installs 'default-jre-headless'
+  
+  meet {
+    Babushka.host.pkg_helper.handle_install! "default-jre-headless"
+    shell "wget -P /tmp http://de.archive.ubuntu.com/ubuntu/pool/multiverse/e/ec2-api-tools/ec2-api-tools_1.5.0.0-0ubuntu1_all.deb"
+    shell "dpkg -i /tmp/ec2-api-tools_1.5.0.0-0ubuntu1_all.deb"
   }
-end
-
-dep 'ec2-run-instances.bin' do
-  installs {
-    on :ubuntu, 'ec2-run-instances.bin'
-    on :debian, 'hello world'
-  }
-end
-
-dep 'ec2-run-instancesOnDebian' do
 
 end
 
-meta "deb" do
-  accepts_list_for :source
-  accepts_list_for :extra_source # this shouldn't be needed, will be patched soon
-  template {
-    helper :missing_sources do
-      source.reject {|s|
-        shell("dpkg show #{s.inspect}") # or whatever the actual command is
-      }
-    end
-    met? {
-      missing_sources.empty?
-    }
-    meet {
-      missing_sources.each {|s|
-        shell("dpkg install #{s.inspect}") # or whatever the actual command is
-      }
-    }
-  }
+dep 'ec2-run-instances.bin' , :for => :ubuntu do
+  installs 'ec2-api-tools'
 end
 
-dep 'ec2-run-instances.deb' 
 
