@@ -40,5 +40,35 @@ dep 'ec2-api-tools-installed' do
 end
 
 dep 'ec2-run-instances.bin' do
-   installs 'ec2-api-tools'
+  installs {
+    on :ubuntu, 'ec2-run-instances.bin'
+    on :debian, 'hello world'
+  }
 end
+
+dep 'ec2-run-instancesOnDebian' do
+
+end
+
+meta "deb" do
+  accepts_list_for :source
+  accepts_list_for :extra_source # this shouldn't be needed, will be patched soon
+  template {
+    helper :missing_sources do
+      source.reject {|s|
+        shell("dpkg show #{s.inspect}") # or whatever the actual command is
+      }
+    end
+    met? {
+      missing_sources.empty?
+    }
+    meet {
+      missing_sources.each {|s|
+        shell("dpkg install #{s.inspect}") # or whatever the actual command is
+      }
+    }
+  }
+end
+
+dep 'ec2-run-instances.deb' 
+
