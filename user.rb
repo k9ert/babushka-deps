@@ -8,7 +8,7 @@ dep 'dotfiles', :username, :github_user, :repo do
   }
   meet {
     shell %Q{git clone git://github.com/#{github_user}/#{repo} ~/.dotfiles }, :as => username
-    shell "cd ~/.dotfiles && rake install"
+    shell "cd ~/.dotfiles && git checkout custom-bash-zsh && rake install[y]"
   }
 end
 
