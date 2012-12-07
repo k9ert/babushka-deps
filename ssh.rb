@@ -34,6 +34,6 @@ dep 'babushka deps cloned' do
   meet { shell "git clone #{var :babushka_deps_repo} #{var :babushka_deps_dir}" }
 end
 
-dep 'bootstap' do
+dep 'ssh-bootstrap' do
   requires 'babushka deps cloned'
 end

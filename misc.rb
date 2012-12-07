@@ -6,6 +6,14 @@ dep 'hello world', :someone do
   }
 end
 
+dep 'bootstrap' do
+  requires 'ssh-bootstrap','vim.bin','less.bin'
+end
+
+dep 'vim.bin'
+
+dep 'less.bin' 
+
 dep 'debian-apt-sources' do
   met? {
     File.exist?("/etc/apt/sources.list.d/stable.list") && 
